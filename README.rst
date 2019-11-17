@@ -4,6 +4,19 @@ bash-dirstack
 
 A simple implementation of a directory stack for bash.
 
+Motivation
+----------
+
+The commands "dirs", "pushd" and "popd" in bash can also manage a directory stack. 
+
+This approach here has the following advantages:
+
+- A single directory stack across *all* terminal windows.
+- The directory stack is a text file than can be edited.
+- The directory stack is preserved after you log off.
+- You can use several directory stacks, each with a different name.
+- You can go to the last entry on the stack without removing it from the stack.
+
 How to install
 --------------
 
