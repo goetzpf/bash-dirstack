@@ -44,6 +44,7 @@ function PGO {
     else
         cd $(sed "${1}q;d" $MY_PATHSTACK)
     fi
+}
 
 function PHELP
   { 
