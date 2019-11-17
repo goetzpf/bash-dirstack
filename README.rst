@@ -43,7 +43,8 @@ PLIST shows the contents of the file with line numbers. PEDIT calls your default
 PCLEAR removes all lines from the file and put in a single line with the path to your home directory.
  
 PGO NUMBER goes to the directory of line NUMBER in the file. You can see the NUMBER you need 
-to enter with command PLIST.
+to enter with command PLIST. If you omit NUMBER, you change to the directory of the last line
+in the file. The directory stack file is not changed with this command. 
  
 PSET defines a new name for the directory stack file. With "PSET NAME" you set the name to 
 "PATH.NAME", e.g. "PSET new" sets it to "PATH.new". By this you can maintain more than one directory stack at a time.
