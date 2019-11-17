@@ -22,7 +22,7 @@ Your shell gets some extra commands::
   POP                     : pop directory from directory stack and change directory
   PLIST                   : show directory stack with line numbers
   PEDIT                   : edit directory stack file
-  PCLEAR                  : set directory stack to one entry: \$HOME
+  PCLEAR                  : set directory stack to one entry: $HOME
   PGO NUMBER              : go to directory NUMBER
   PSET [TAG]              : create/use new directory stack file with tag TAG. If TAG is
                             not given use the standard filename.
