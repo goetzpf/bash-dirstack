@@ -2,25 +2,30 @@
 bash-dirstack
 =============
 
-A simple implementation of a directory stack for bash.
+An implementation of a persistent directory stack in bash.
 
 Motivation
 ----------
 
-The commands "dirs", "pushd" and "popd" in bash can also manage a directory stack. 
+Although bash has the built-in commands "dirs", "pushd" and "popd" that manage
+a directory stack, these commands lack certain features.  
 
-This approach here has the following advantages:
+bash-dirstack has the following advantages:
 
-- A single directory stack across *all* terminal windows.
+- A single directory stack file can be shared across *all* terminal windows of
+  your session.
 - The directory stack is a text file than can be edited.
 - The directory stack is preserved after you log off.
 - You can use several directory stacks, each with a different name.
 - You can go to the last entry on the stack without removing it from the stack.
+- You can navigate to directories in the stack without changing the stack.
+- You can use strings, even regular expressions to select directories from the stack.
 
 How to install
 --------------
 
-Add all lines from file "dirstack.sh" to your file .bashrc or include them by adding this line to .bashrc::
+Add all lines from file "dirstack.sh" to your file .bashrc or include them by
+adding this line to .bashrc::
 
   source DIRECTORY/dirstack.sh
 
@@ -29,37 +34,140 @@ DIRECTORY is, of course, the directory where "dirstack.sh" can be found.
 Usage
 -----
 
-Your shell gets some extra commands::
+These are the commands of bash-dirstack, each command has capitial letters and
+starts with "P"::
 
-  PUSH                    : push directory on directory stack
-  POP                     : pop directory from directory stack and change directory
-  PLIST                   : show directory stack with line numbers
-  PEDIT                   : edit directory stack file
-  PCLEAR                  : set directory stack to one entry: $HOME
-  PGO NUMBER              : go to directory NUMBER
-  PSET [TAG]              : create/use new directory stack file with tag TAG. If TAG is
+  PLIST [REGEXP]          : Show directory stack with line numbers. The stack is shown
+                            from bottom (first line) to top (last line).
+                            If REGEXP is given, show a list with line numbers of matching
+                            directories in the directory stack. For REGEXP see "man egrep".
+  PUSH [DIR]              : If DIR is given, go to DIR and put it on the top of the directory
+                            stack. If DIR is not given, push the current working directory on 
+                            top of directory stack.
+  PPUSH DIR               : Put the current working directory on the stack and change to DIR.
+  PUT [DIR]               : Put directory DIR on top of the directory stack but do not change
+                          : the current working directory.
+  POP                     : Remove top of the directory stack and go to that directory.
+  PPOP                    : Remove top of the directory stack and go to the directory that
+                            is now the top of the stack.
+  PDROP                   : Remove top of the directory stack but do not change the current
+                            working directory.
+  PGO [NUMBER]            : Go to directory in line NUMBER in the directory stack. The line
+                            numbers can be seen with PLIST. If NUMBER is omitted, go to the
+                            directory that is the top of the stack (the last one PLIST shows).
+  PXGO REGEXP [NUMBER]    : Go to match NUMBER in the list of directories from the stack that
+                            match regular expression REGEXP. For REGEXP see "man egrep".
+                            If NUMBER is missing and there is only one match, go to that directory.
+                            If NUMBER is missing and there is more than one match, list all matches 
+                            with line numbers.
+  PBACK                   : Go back to that last directory before it was changed by a
+                            bash-dirstack command.
+  PEDIT                   : Edit directory stack file
+  PCLEAR                  : Initialize the directory stack with a single entry, which
+                            is your home directory.
+  PSET [TAG]              : Initialize or use new directory stack file with tag TAG. If TAG is
                             not given use the standard filename.
-  PSET-LIST               : list existing tags for PSET command
+  PSET-LIST               : List existing tags for PSET command
 
-Your directory stack is kept in a file in your HOME directory. The default name of this file is "PATH".
+Your directory stack is kept in a file in your HOME directory. The default name
+of this file is "DIRSTACK".
 
 How it works  
 ------------
     
-Your directory stack is kept in a file in your HOME directory. The default name of this file is "PATH".                                    
-    
-IF you enter "PUSH" your current working directory is appended to this file. If you enter "POP" 
-you change to the directory of the last line in the file, and this line is removed.
- 
-PLIST shows the contents of the file with line numbers. PEDIT calls your default editor to edit this file.
- 
-PCLEAR removes all lines from the file and put in a single line with the path to your home directory.
- 
-PGO NUMBER goes to the directory of line NUMBER in the file. You can see the NUMBER you need 
-to enter with command PLIST. If you omit NUMBER, you change to the directory of the last line
-in the file. The directory stack file is not changed with this command. 
- 
-PSET defines a new name for the directory stack file. With "PSET NAME" you set the name to 
-"PATH.NAME", e.g. "PSET new" sets it to "PATH.new". By this you can maintain more than one directory stack at a time.
- 
-PSET-LIST lists all directory stack files.
+Your directory stack is kept in a file in your HOME directory. The default name
+of this file is "DIRSTACK".                                    
+
+All commands are shell functions or aliases. They use standard linux command
+line tools to operate on the directory stack file.
+
+Examples
+--------
+
+Bookmarking
++++++++++++
+
+When you operate in your text terminal, each time you want to remember the
+current working directory, enter::
+
+  PUSH
+
+In order to see what paths were remembered, enter::
+
+  PLIST
+
+Each path in the stack (from bottom to top) is printed with a leading line
+number.
+
+You may go to the last entry (top of stack) without changing the stack with::
+
+  PGO
+
+Or you may go to an arbitrary directory from the stack with::
+
+  PGO NUMBER
+
+where NUMBER is a line number shown with "PLIST". 
+
+Using string matches and regular expressions
+++++++++++++++++++++++++++++++++++++++++++++
+
+When your directory stack has many entries, instead of using "PGO NUMBER" it
+may be easier to use regular expression matching. bash-dirstack uses extended
+POSIX regular expressions. See 
+
+You can see which of the paths lists a given REGEXP with::
+
+  PLIST REGEXP
+
+If there is only one match you can change to the directory with::
+
+  PXGO REGEXP
+
+If there is more than one match, "PXGO" shows the matches with line numbers.
+You can then select a line with::
+
+  PXGO REGEXP NUMBER
+
+Remembering all directories in a workflow
++++++++++++++++++++++++++++++++++++++++++
+
+Instead of "cd DIR" use the PUSH command::
+
+  PUSH DIR
+
+With every "PUSH" command, the given directory is put on the stack.
+
+You can go back to the previous directory with the command::
+
+  PPOP
+
+With this approach, you use bash-dirstack exactly like a stack.
+
+Using more than one directory stack
++++++++++++++++++++++++++++++++++++
+
+You can define a new directory stack with::
+
+  PSET NAME
+
+This defines a new directory stack with the given NAME. 
+
+The following command lists all directory stacks::
+
+  PSET-LIST
+
+Working with more than one terminal
++++++++++++++++++++++++++++++++++++
+
+If you have two text terminals and want to go to the same directory in the
+second terminal do the following:
+
+In terminal 1::
+
+  PUSH
+
+In terminal 2::
+
+  PGO
+

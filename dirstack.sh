@@ -20,49 +20,198 @@
 #                      path stack
 # -------------------------------------------------------
 
-alias PUSH='pwd >> $MY_PATHSTACK'
-alias POP='cd "$(tail -n 1 $MY_PATHSTACK)"; sed -i "$ d" $MY_PATHSTACK'
-alias PLIST='echo $MY_PATHSTACK:;nl $MY_PATHSTACK'
-alias PEDIT='$EDITOR $MY_PATHSTACK'
-alias PCLEAR='echo $HOME > $MY_PATHSTACK'
-alias PSET-LIST='ls $HOME/PATH.* 2>/dev/null | sed -e "s/^.*PATH\.//"'
+_BASH_DIRSTACK_FILENAME="$HOME/DIRSTACK"
 
-function PSET {
+# path stack data file:
+_BASH_DIRSTACK="$_BASH_DIRSTACK_FILENAME"
+
+# last directory before change:
+_BASH_DIRSTACK_LAST="$HOME"
+
+# last directory before PBACK command:
+_BASH_DIRSTACK_LAST_BEF="$HOME"
+
+if [ ! -e $_BASH_DIRSTACK ]; then
+    echo $HOME > "$_BASH_DIRSTACK"
+fi
+
+function PLIST {
     if [ -z "$1" ]; then
-        MY_PATHSTACK="$HOME/PATH"
+        echo $_BASH_DIRSTACK:;nl $_BASH_DIRSTACK
     else
-        MY_PATHSTACK="$HOME/PATH.$1"
-    fi
-    if [ ! -e "$MY_PATHSTACK" ]; then
-        echo $HOME > "$MY_PATHSTACK"
+        grep -E -- "$1" $_BASH_DIRSTACK | nl
     fi
 }
+
+function PUSH {
+    if [ -z "$1" ]; then
+        pwd >> $_BASH_DIRSTACK
+        return 0
+    fi
+    if [ ! -d "$1" ]; then
+        echo "error, $1 is not a directory" >&2
+        return 1
+    fi
+    _BASH_DIRSTACK_LAST=$(pwd)
+    cd "$1" && pwd >> $_BASH_DIRSTACK
+}
+
+function PPUSH {
+    if [ -z "$1" ]; then
+        echo "error, directory missing" >&2
+        return 1
+    fi
+    if [ ! -d "$1" ]; then
+        echo "error, $1 is not a directory" >&2
+        return 1
+    fi
+    pwd >> $_BASH_DIRSTACK
+    _BASH_DIRSTACK_LAST=$(pwd)
+    cd "$1"
+}
+
+
+function PUT {
+    if [ ! -d "$1" ]; then
+        echo "error, $1 is not a directory" >&2
+        return 1
+    fi
+    (cd "$1" && pwd >> $_BASH_DIRSTACK)
+}
+
+function POP {
+    _BASH_DIRSTACK_LAST=$(pwd)
+    cd "$(tail -n 1 $_BASH_DIRSTACK)"
+    sed -i "$ d" $_BASH_DIRSTACK
+}
+
+function PPOP {
+    sed -i "$ d" $_BASH_DIRSTACK
+    _BASH_DIRSTACK_LAST=$(pwd)
+    cd "$(tail -n 1 $_BASH_DIRSTACK)"
+}
+
+alias PDROP='sed -i "$ d" $_BASH_DIRSTACK'
 
 function PGO {
     if [ -z "$1" ]; then
-        cd $(sed "\$!d" $MY_PATHSTACK)
+        _BASH_DIRSTACK_LAST=$(pwd)
+        cd $(sed "\$!d" $_BASH_DIRSTACK)
     else
-        cd $(sed "${1}q;d" $MY_PATHSTACK)
+        if [[ ! "$1" =~ ^[0-9]+$ ]]; then 
+            echo "error: argument must be an integer" >&2
+            return 1
+        fi
+        if (( $1<1 )); then
+            echo "integer must be greater or equal to 1" >&2
+            return 1
+        fi
+        if (( $1>$(wc -l < $_BASH_DIRSTACK) )); then
+            echo "integer is too large" >&2
+            return 1
+        fi
+        _BASH_DIRSTACK_LAST=$(pwd)
+        cd $(sed "${1}q;d" $_BASH_DIRSTACK)
     fi
 }
+
+function PXGO {
+    if [ -z "$1" ]; then
+        echo "REGEXP missing" >&2
+        return 1
+    fi
+    _BASH_DIRSTACK_MATCHES=$(grep -E -c -- "$1" $_BASH_DIRSTACK)
+    if (( 0==$_BASH_DIRSTACK_MATCHES )); then
+        echo "no match" >&2
+        return 1
+    fi
+    if [ -z "$2" ]; then
+        if (( $_BASH_DIRSTACK_MATCHES == 1 )); then
+            _BASH_DIRSTACK_LAST=$(pwd)
+            cd $(grep -E -- "$1" $_BASH_DIRSTACK)
+        else
+            grep -E -- "$1" $_BASH_DIRSTACK | nl
+        fi
+    else
+        if [[ ! "$2" =~ ^[0-9]+$ ]]; then 
+            echo "error: 2nd argument must be an integer" >&2
+            return 1
+        fi
+        if (( $2<1 )); then
+            echo "integer must be greater or equal to 1" >&2
+            return 1
+        fi
+        if (( $2 > $_BASH_DIRSTACK_MATCHES )); then
+            echo "integer is too large" >&2
+            return 1
+        fi
+        _BASH_DIRSTACK_LAST=$(pwd)
+        cd $(grep -E -- "$1" $_BASH_DIRSTACK | sed "${2}q;d")
+    fi
+}
+
+function PBACK {
+    _BASH_DIRSTACK_LAST_BEF="$_BASH_DIRSTACK_LAST"
+    _BASH_DIRSTACK_LAST=$(pwd)
+    cd $_BASH_DIRSTACK_LAST_BEF
+}
+
+alias PEDIT='$EDITOR $_BASH_DIRSTACK'
+alias PCLEAR='echo $HOME > $_BASH_DIRSTACK'
+
+function PSET {
+    if [ -z "$1" ]; then
+        _BASH_DIRSTACK="$_BASH_DIRSTACK_FILENAME"
+    else
+        _BASH_DIRSTACK="$_BASH_DIRSTACK_FILENAME.$1"
+    fi
+    if [ ! -e "$_BASH_DIRSTACK" ]; then
+        echo $HOME > "$_BASH_DIRSTACK"
+    fi
+}
+
+alias PSET-LIST='ls $_BASH_DIRSTACK_FILENAME.* 2>/dev/null | sed -e "s/$_BASH_DIRSTACK_FILENAME\.//"'
 
 function PHELP
   { 
     echo '----------------------------------------------------------------------------'
-    echo 'extra commands for the directory stack:'
-    echo 'PUSH                    : push directory on directory stack'
-    echo 'POP                     : pop directory from directory stack and change directory'
-    echo 'PLIST                   : show directory stack with line numbers'
-    echo 'PEDIT                   : edit directory stack file'
-    echo 'PCLEAR                  : set directory stack to one entry: \$HOME'
-    echo 'PGO NUMBER              : go to directory NUMBER'
-    echo 'PSET [TAG]              : create/use new directory stack file with tag TAG. If TAG is'
+    echo 'bash-dirstack'
+    echo '----------------------------------------------------------------------------'
+    echo 'commands:'
+    echo
+    echo 'PLIST [REGEXP]          : Show directory stack with line numbers. The stack is shown'
+    echo '                          from bottom (first line) to top (last line).'
+    echo '                          If REGEXP is given, show a list with line numbers of matching'
+    echo '                          directories in the directory stack. For REGEXP see "man egrep".'
+    echo 'PUSH [DIR]              : If DIR is given, go to DIR and put it on the top of the directory'
+    echo '                          stack. If DIR is not given, push the current working directory on '
+    echo '                          top of directory stack.'
+    echo 'PPUSH DIR               : Put the current working directory on the stack and change to DIR.'
+    echo 'PUT [DIR]               : Put directory DIR on top of the directory stack but do not change'
+    echo '                        : the current working directory.'
+    echo 'POP                     : Remove top of the directory stack and go to that directory.'
+    echo 'PPOP                    : Remove top of the directory stack and go to the directory that'
+    echo '                          is now the top of the stack.'
+    echo 'PDROP                   : Remove top of the directory stack but do not change the current'
+    echo '                          working directory.'
+    echo 'PGO [NUMBER]            : Go to directory in line NUMBER in the directory stack. The line'
+    echo '                          numbers can be seen with PLIST. If NUMBER is omitted, go to the'
+    echo '                          directory that is the top of the stack (the last one PLIST shows).'
+    echo 'PXGO REGEXP [NUMBER]    : Go to match NUMBER in the list of directories from the stack that'
+    echo '                          match regular expression REGEXP. For REGEXP see "man egrep".'
+    echo '                          If NUMBER is missing and there is only one match, go to that directory.'
+    echo '                          If NUMBER is missing and there is more than one match, list all matches '
+    echo '                          with line numbers.'
+    echo 'PBACK                   : Go back to that last directory before it was changed by a'
+    echo '                          bash-dirstack command.'
+    echo 'PEDIT                   : Edit directory stack file'
+    echo 'PCLEAR                  : Initialize the directory stack with a single entry, which'
+    echo '                          is your home directory.'
+    echo 'PSET [TAG]              : Initialize or use new directory stack file with tag TAG. If TAG is'
     echo '                          not given use the standard filename.'
-    echo 'PSET-LIST               : list existing tags for PSET command'
+    echo 'PSET-LIST               : List existing tags for PSET command'
     echo
     echo '----------------------------------------------------------------------------'
   }    
 
-# path stack data file:
-MY_PATHSTACK="$HOME/PATH"
 
