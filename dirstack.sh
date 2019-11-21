@@ -175,7 +175,7 @@ alias PSET-LIST='ls $_BASH_DIRSTACK_FILENAME.* 2>/dev/null | sed -e "s/$_BASH_DI
 function PHELP
   { 
     echo '----------------------------------------------------------------------------'
-    echo 'bash-dirstack'
+    echo 'bash-dirstack 1.0'
     echo '----------------------------------------------------------------------------'
     echo 'commands:'
     echo

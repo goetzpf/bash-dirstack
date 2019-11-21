@@ -1,6 +1,6 @@
-=============
-bash-dirstack
-=============
+=================
+bash-dirstack 1.0
+=================
 
 An implementation of a persistent directory stack in bash.
 
