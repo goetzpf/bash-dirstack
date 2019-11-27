@@ -170,12 +170,12 @@ function PSET {
     fi
 }
 
-alias PSET-LIST='ls $_BASH_DIRSTACK_FILENAME.* 2>/dev/null | sed -e "s/$_BASH_DIRSTACK_FILENAME\.//"'
+alias PSET-LIST='ls $_BASH_DIRSTACK_FILENAME.* 2>/dev/null | sed -e "s#$_BASH_DIRSTACK_FILENAME\.##"'
 
 function PHELP
   { 
     echo '----------------------------------------------------------------------------'
-    echo 'bash-dirstack 1.0'
+    echo 'bash-dirstack 1.0.1'
     echo '----------------------------------------------------------------------------'
     echo 'commands:'
     echo
