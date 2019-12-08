@@ -287,7 +287,7 @@ function dshelp {
         echo 'dsdrop                : Remove top of the directory stack but do not change the'
         echo '                        current working directory.'
     fi
-    if [ "$1" == "all" -o "$1" == "dsgo" ]; then
+    if [ "$1" == "all" -o "$1" == "dsngo" ]; then
         echo 'dsngo [NUMBER]        : Go to directory in line NUMBER in the directory stack.'
         echo '                        The line numbers can be seen with dslist. If NUMBER is'
         echo '                        omitted, go to the directory that is the top of the'
@@ -400,7 +400,7 @@ C="${_BASH_DIRSTACK_COMMANDS[@]}"
 complete -F _dsngo_completions dsngo 
 complete -F _dsgo_completions dsgo 
 complete -F _dsgo_completions dslist
-complete -W "$_BASH_DIRSTACK_COMMANDS" dshelp
+complete -W "all list $_BASH_DIRSTACK_COMMANDS" dshelp
 complete -W "" dspop
 complete -W "" dsdropgo
 complete -W "" dsdrop
