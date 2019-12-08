@@ -85,6 +85,15 @@ These are the commands of bash-dirstack, each command starts with "ds"::
 Your directory stack is kept in a directory in your HOME directory. The default name
 of this directory is "DIRSTACK".
 
+Command completion
+------------------
+
+All commands that accept an argument have command completion. If you press
+<TAB> one or more times, suggestions for the following argument are displayed.
+If you enter the first characters of a command and press <TAB> again, bash
+tries to complete the command as far as possible. If you press <ENTER> the
+command with the argument displayed so far is executed.
+
 How it works  
 ------------
     
