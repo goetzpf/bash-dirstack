@@ -28,7 +28,7 @@ _BASH_DIRSTACK="$_BASH_DIRSTACK_DIR/default"
 # last directory before change:
 _BASH_DIRSTACK_LAST="$HOME"
 
-# last directory before PBACK command:
+# last directory before dsback command:
 _BASH_DIRSTACK_LAST_BEF="$HOME"
 
 if [ ! -d "$_BASH_DIRSTACK_DIR" ]; then
@@ -45,7 +45,7 @@ if [ ! -e $_BASH_DIRSTACK ]; then
     echo $HOME > "$_BASH_DIRSTACK"
 fi
 
-function PLIST {
+function dslist {
     if [ -z "$1" ]; then
         echo $_BASH_DIRSTACK:;nl $_BASH_DIRSTACK
     else
@@ -53,7 +53,9 @@ function PLIST {
     fi
 }
 
-function PUSH {
+alias dspush='dscdpush'
+
+function dscdpush {
     if [ -z "$1" ]; then
         pwd >> $_BASH_DIRSTACK
         return 0
@@ -66,7 +68,7 @@ function PUSH {
     cd "$1" && pwd >> $_BASH_DIRSTACK
 }
 
-function PPUSH {
+function dspushcd {
     if [ -z "$1" ]; then
         echo "error, directory missing" >&2
         return 1
@@ -81,7 +83,7 @@ function PPUSH {
 }
 
 
-function PUT {
+function dsput {
     if [ ! -d "$1" ]; then
         echo "error, $1 is not a directory" >&2
         return 1
@@ -89,21 +91,21 @@ function PUT {
     (cd "$1" && pwd >> $_BASH_DIRSTACK)
 }
 
-function POP {
+function dspop {
     _BASH_DIRSTACK_LAST=$(pwd)
     cd "$(tail -n 1 $_BASH_DIRSTACK)"
     sed -i "$ d" $_BASH_DIRSTACK
 }
 
-function PPOP {
+function dsdropgo {
     sed -i "$ d" $_BASH_DIRSTACK
     _BASH_DIRSTACK_LAST=$(pwd)
     cd "$(tail -n 1 $_BASH_DIRSTACK)"
 }
 
-alias PDROP='sed -i "$ d" $_BASH_DIRSTACK'
+alias dsdrop='sed -i "$ d" $_BASH_DIRSTACK'
 
-function PGO {
+function dsngo {
     if [ -z "$1" ]; then
         _BASH_DIRSTACK_LAST=$(pwd)
         cd $(sed "\$!d" $_BASH_DIRSTACK)
@@ -125,9 +127,10 @@ function PGO {
     fi
 }
 
-function PXGO {
+function dsgo {
     if [ -z "$1" ]; then
-        cat $_BASH_DIRSTACK | nl
+        _BASH_DIRSTACK_LAST=$(pwd)
+        cd $(sed "\$!d" $_BASH_DIRSTACK)
         return 0
     fi
     _BASH_DIRSTACK_MATCHES=$(grep -E -c -- "$1" $_BASH_DIRSTACK)
@@ -166,16 +169,16 @@ function PXGO {
     fi
 }
 
-function PBACK {
+function dsback {
     _BASH_DIRSTACK_LAST_BEF="$_BASH_DIRSTACK_LAST"
     _BASH_DIRSTACK_LAST=$(pwd)
     cd $_BASH_DIRSTACK_LAST_BEF
 }
 
-alias PEDIT='$EDITOR $_BASH_DIRSTACK'
-alias PCLEAR='echo $HOME > $_BASH_DIRSTACK'
+alias dsedit='$EDITOR $_BASH_DIRSTACK'
+alias dsclear='echo $HOME > $_BASH_DIRSTACK'
 
-function PSET {
+function dsset {
     if [ -z "$1" ]; then
         _BASH_DIRSTACK="$_BASH_DIRSTACK_DIR/default"
     else
@@ -186,55 +189,58 @@ function PSET {
     fi
 }
 
-function PSET-LIST {
+function dssetlist {
     ls $_BASH_DIRSTACK_DIR
 }
 
-function PHELP
+function dshelp
   { 
     echo '----------------------------------------------------------------------------'
-    echo 'bash-dirstack 1.0.1'
+    echo 'bash-dirstack 2.0'  
     echo '----------------------------------------------------------------------------'
     echo 'commands:'
-    echo  
-    echo 'PLIST [REGEXP]        : Show directory stack with line numbers. The stack is'
-    echo '                        shown from bottom (first line) to top (last line).  If'
+    echo ''
+    echo 'dslist [REGEXP]       : Show directory stack with line numbers. The stack is'
+    echo '                        shown from bottom (first line) to top (last line). If'
     echo '                        REGEXP is given, show a list with line numbers of'
     echo '                        matching directories in the directory stack. For REGEXP'
     echo '                        see "man egrep".'
-    echo 'PUSH [DIR]            : If DIR is given, go to DIR and put it on the top of the'
+    echo 'dspush [DIR]          : An alias for dscdpush.'
+    echo 'dscdpush [DIR]        : If DIR is given, go to DIR and put it on the top of the'
     echo '                        directory stack. If DIR is not given, push the current'
     echo '                        working directory on top of directory stack.'
-    echo 'PPUSH DIR             : Put the current working directory on the stack and'
+    echo 'dspushcd DIR          : Put the current working directory on the stack and'
     echo '                        change to DIR.'
-    echo 'PUT [DIR]             : Put directory DIR on top of the directory stack but do'
+    echo 'dsput DIR             : Put directory DIR on top of the directory stack but do'
     echo '                        not change the current working directory.'
-    echo 'POP                   : Remove top of the directory stack and go to that'
+    echo 'dspop                 : Remove top of the directory stack and go to that'
     echo '                        directory.'
-    echo 'PPOP                  : Remove top of the directory stack and go to the'
+    echo 'dsdropgo              : Remove top of the directory stack and go to the'
     echo '                        directory that is now the top of the stack.'
-    echo 'PDROP                 : Remove top of the directory stack but do not change the'
+    echo 'dsdrop                : Remove top of the directory stack but do not change the'
     echo '                        current working directory.'
-    echo 'PGO [NUMBER]          : Go to directory in line NUMBER in the directory stack.'
-    echo '                        The line numbers can be seen with PLIST. If NUMBER is'
+    echo 'dsngo [NUMBER]        : Go to directory in line NUMBER in the directory stack.'
+    echo '                        The line numbers can be seen with dslist. If NUMBER is'
     echo '                        omitted, go to the directory that is the top of the'
-    echo '                        stack (the last one PLIST shows).'
-    echo 'PXGO REGEXP [NUMBER]  : Go to match NUMBER in the list of directories from the'
+    echo '                        stack (the last one dslist shows).'
+    echo 'dsgo [REGEXP] [NUMBER]: Go to match NUMBER in the list of directories from the'
     echo '                        stack that match regular expression REGEXP. For REGEXP'
-    echo '                        see "man egrep". If NUMBER is missing and there is'
-    echo '                        only one match or if the pattern matches a line '
-    echo '                        go to that directory.  If NUMBER is missing and there '
-    echo '                        is more than one match, list all matches with line '
-    echo '                        numbers.'
-    echo 'PBACK                 : Go back to that last directory before it was changed by'
+    echo '                        see "man egrep". If NUMBER is missing and there is only'
+    echo '                        one match or if the pattern matches a line go to that'
+    echo '                        directory. If NUMBER is missing and there is more than'
+    echo '                        one match, list all matches with line numbers.'
+    echo '                        IF REGEXP and NUMBER are missing, go to the directory '
+    echo '                        that is the top of the stack (the last one dslist '
+    echo '                        shows).'
+    echo 'dsback                : Go back to that last directory before it was changed by'
     echo '                        a bash-dirstack command.'
-    echo 'PEDIT                 : Edit directory stack file.'
-    echo 'PCLEAR                : Initialize the directory stack with a single entry,'
+    echo 'dsedit                : Edit directory stack file.'
+    echo 'dsclear               : Initialize the directory stack with a single entry,'
     echo '                        which is your home directory.'
-    echo 'PSET [TAG]            : Initialize or use new directory stack file with tag.'
+    echo 'dsset [TAG]           : Initialize or use new directory stack file with tag.'
     echo '                        TAG. If TAG is not given use the standard filename.'
-    echo 'PSET-LIST             : List existing tags for PSET command.'
-    echo
+    echo 'dssetlist             : List existing tags for dsset command.'
+    echo ''
     echo '----------------------------------------------------------------------------'
   }    
 
