@@ -39,7 +39,7 @@ function PLIST {
     if [ -z "$1" ]; then
         echo $_BASH_DIRSTACK:;nl $_BASH_DIRSTACK
     else
-        grep -E -- "$1" $_BASH_DIRSTACK | nl
+        nl $_BASH_DIRSTACK | grep -E -- "$1" 
     fi
 }
 
