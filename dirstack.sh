@@ -193,55 +193,139 @@ function dssetlist {
     ls $_BASH_DIRSTACK_DIR
 }
 
-function dshelp
-  { 
-    echo '----------------------------------------------------------------------------'
-    echo 'bash-dirstack 2.0'  
-    echo '----------------------------------------------------------------------------'
-    echo 'commands:'
-    echo ''
-    echo 'dslist [REGEXP]       : Show directory stack with line numbers. The stack is'
-    echo '                        shown from bottom (first line) to top (last line). If'
-    echo '                        REGEXP is given, show a list with line numbers of'
-    echo '                        matching directories in the directory stack. For REGEXP'
-    echo '                        see "man egrep".'
-    echo 'dspush [DIR]          : An alias for dscdpush.'
-    echo 'dscdpush [DIR]        : If DIR is given, go to DIR and put it on the top of the'
-    echo '                        directory stack. If DIR is not given, push the current'
-    echo '                        working directory on top of directory stack.'
-    echo 'dspushcd DIR          : Put the current working directory on the stack and'
-    echo '                        change to DIR.'
-    echo 'dsput DIR             : Put directory DIR on top of the directory stack but do'
-    echo '                        not change the current working directory.'
-    echo 'dspop                 : Remove top of the directory stack and go to that'
-    echo '                        directory.'
-    echo 'dsdropgo              : Remove top of the directory stack and go to the'
-    echo '                        directory that is now the top of the stack.'
-    echo 'dsdrop                : Remove top of the directory stack but do not change the'
-    echo '                        current working directory.'
-    echo 'dsngo [NUMBER]        : Go to directory in line NUMBER in the directory stack.'
-    echo '                        The line numbers can be seen with dslist. If NUMBER is'
-    echo '                        omitted, go to the directory that is the top of the'
-    echo '                        stack (the last one dslist shows).'
-    echo 'dsgo [REGEXP] [NUMBER]: Go to match NUMBER in the list of directories from the'
-    echo '                        stack that match regular expression REGEXP. For REGEXP'
-    echo '                        see "man egrep". If NUMBER is missing and there is only'
-    echo '                        one match or if the pattern matches a line go to that'
-    echo '                        directory. If NUMBER is missing and there is more than'
-    echo '                        one match, list all matches with line numbers.'
-    echo '                        IF REGEXP and NUMBER are missing, go to the directory '
-    echo '                        that is the top of the stack (the last one dslist '
-    echo '                        shows).'
-    echo 'dsback                : Go back to that last directory before it was changed by'
-    echo '                        a bash-dirstack command.'
-    echo 'dsedit                : Edit directory stack file.'
-    echo 'dsclear               : Initialize the directory stack with a single entry,'
-    echo '                        which is your home directory.'
-    echo 'dsset [TAG]           : Initialize or use new directory stack file with tag.'
-    echo '                        TAG. If TAG is not given use the standard filename.'
-    echo 'dssetlist             : List existing tags for dsset command.'
-    echo ''
-    echo '----------------------------------------------------------------------------'
+_BASH_DIRSTACK_COMMAND_ARRAY=(  \
+    dsback \
+    dscdpush \
+    dsclear \
+    dsdrop \
+    dsdropgo \
+    dsedit \
+    dsgo \
+    dshelp \
+    dslist \
+    dsngo \
+    dspop \
+    dspush \
+    dspushcd \
+    dsput \
+    dsset \
+    dssetlist \
+)
+
+_BASH_DIRSTACK_COMMANDS="${_BASH_DIRSTACK_COMMAND_ARRAY[@]}"
+
+function dshelp { 
+    local rx
+    if [ -z "$1" ]; then 
+        echo "Help for bash-dirstack"
+        echo "Usage:"
+        echo "dshelp TOPIC where topic is one of:"
+        echo "  all     : Help for all commands"
+        echo "  list    : List all known commands"
+        echo "  COMMAND : help for a specific command"
+        return
+    else
+        rx="\\b$1\\b"
+        if [[ ! "all list $_BASH_DIRSTACK_COMMANDS" =~ $rx ]]; then
+            echo "unkown command or TOPIC"
+            echo "TOPIC must be 'all', 'list' or a known command"
+            return
+        fi
+    fi
+    if [ "$1" == "list" ]; then 
+        echo "Help for bash-dirstack"
+        echo "Known commands:"
+        echo "$_BASH_DIRSTACK_COMMANDS" | fold -w 60 -s | column -t
+        return
+    fi
+    if [ "$1" == "all" ]; then 
+        echo '----------------------------------------------------------------------------'
+        echo 'bash-dirstack 2.0.1'  
+        echo '----------------------------------------------------------------------------'
+        echo 'commands:'
+        echo ''
+    fi
+    if [ "$1" == "all" -o "$1" == "dshelp" ]; then
+        echo 'dshelp TOPIC          : Print help. '
+        echo '                        When TOPIC is "all", print complete help, when TOPIC '
+        echo '                        is "list", list all known commands. When TOPIC is neither'
+        echo '                        "all" nor "list", interpret it as a name of a command and'
+        echo '                        display help for that command.'
+    fi
+    if [ "$1" == "all" -o "$1" == "dslist" ]; then
+        echo 'dslist [REGEXP]       : Show directory stack with line numbers. The stack is'
+        echo '                        shown from bottom (first line) to top (last line). If'
+        echo '                        REGEXP is given, show a list with line numbers of'
+        echo '                        matching directories in the directory stack. For REGEXP'
+        echo '                        see "man egrep".'
+    fi
+    if [ "$1" == "all" -o "$1" == "dspush" ]; then
+        echo 'dspush [DIR]          : An alias for dscdpush.'
+    fi
+    if [ "$1" == "all" -o "$1" == "dscdpush" ]; then
+        echo 'dscdpush [DIR]        : If DIR is given, go to DIR and put it on the top of the'
+        echo '                        directory stack. If DIR is not given, push the current'
+        echo '                        working directory on top of directory stack.'
+    fi
+    if [ "$1" == "all" -o "$1" == "dspushcd" ]; then
+        echo 'dspushcd DIR          : Put the current working directory on the stack and'
+        echo '                        change to DIR.'
+    fi
+    if [ "$1" == "all" -o "$1" == "dsput" ]; then
+        echo 'dsput DIR             : Put directory DIR on top of the directory stack but do'
+        echo '                        not change the current working directory.'
+    fi
+    if [ "$1" == "all" -o "$1" == "dspop" ]; then
+        echo 'dspop                 : Remove top of the directory stack and go to that'
+        echo '                        directory.'
+    fi
+    if [ "$1" == "all" -o "$1" == "dsdropgo" ]; then
+        echo 'dsdropgo              : Remove top of the directory stack and go to the'
+        echo '                        directory that is now the top of the stack.'
+    fi
+    if [ "$1" == "all" -o "$1" == "dsdrop" ]; then
+        echo 'dsdrop                : Remove top of the directory stack but do not change the'
+        echo '                        current working directory.'
+    fi
+    if [ "$1" == "all" -o "$1" == "dsgo" ]; then
+        echo 'dsngo [NUMBER]        : Go to directory in line NUMBER in the directory stack.'
+        echo '                        The line numbers can be seen with dslist. If NUMBER is'
+        echo '                        omitted, go to the directory that is the top of the'
+        echo '                        stack (the last one dslist shows).'
+    fi
+    if [ "$1" == "all" -o "$1" == "dsgo" ]; then
+        echo 'dsgo [REGEXP] [NUMBER]: Go to match NUMBER in the list of directories from the'
+        echo '                        stack that match regular expression REGEXP. For REGEXP'
+        echo '                        see "man egrep". If NUMBER is missing and there is only'
+        echo '                        one match or if the pattern matches a line go to that'
+        echo '                        directory. If NUMBER is missing and there is more than'
+        echo '                        one match, list all matches with line numbers.'
+        echo '                        IF REGEXP and NUMBER are missing, go to the directory '
+        echo '                        that is the top of the stack (the last one dslist '
+        echo '                        shows).'
+    fi
+    if [ "$1" == "all" -o "$1" == "dsback" ]; then
+        echo 'dsback                : Go back to that last directory before it was changed by'
+        echo '                        a bash-dirstack command.'
+    fi
+    if [ "$1" == "all" -o "$1" == "dsedit" ]; then
+        echo 'dsedit                : Edit directory stack file.'
+    fi
+    if [ "$1" == "all" -o "$1" == "dsclear" ]; then
+        echo 'dsclear               : Initialize the directory stack with a single entry,'
+        echo '                        which is your home directory.'
+    fi
+    if [ "$1" == "all" -o "$1" == "dsset" ]; then
+        echo 'dsset [TAG]           : Initialize or use new directory stack file with tag.'
+        echo '                        TAG. If TAG is not given use the standard filename.'
+    fi
+    if [ "$1" == "all" -o "$1" == "dssetlist" ]; then
+        echo 'dssetlist             : List existing tags for dsset command.'
+    fi
+    if [ "$1" == "all" ]; then
+        echo ''
+        echo '----------------------------------------------------------------------------'
+    fi
   }    
 
 

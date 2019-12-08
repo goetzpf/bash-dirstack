@@ -64,10 +64,15 @@ function _dsset_completions {
     IFS=
 }
 
+function x {
+    echo "${_BASH_DIRSTACK_COMMANDS[@]}"
+}
+C="${_BASH_DIRSTACK_COMMANDS[@]}"
+
 complete -F _dsngo_completions dsngo 
 complete -F _dsgo_completions dsgo 
 complete -F _dsgo_completions dslist
-complete -W "" dshelp
+complete -W "$_BASH_DIRSTACK_COMMANDS" dshelp
 complete -W "" dspop
 complete -W "" dsdropgo
 complete -W "" dsdrop

@@ -1,6 +1,6 @@
-=================
-bash-dirstack 2.0
-=================
+===================
+bash-dirstack 2.0.1
+===================
 
 An implementation of a persistent directory stack in bash.
 
@@ -36,6 +36,11 @@ Usage
 
 These are the commands of bash-dirstack, each command starts with "ds"::
 
+  dshelp TOPIC          : Print help. 
+                          When TOPIC is "all", print complete help, when TOPIC 
+                          is "list", list all known commands. When TOPIC is neither
+                          "all" nor "list", interpret it as a name of a command and
+                          display help for that command.
   dslist [REGEXP]       : Show directory stack with line numbers. The stack is
                           shown from bottom (first line) to top (last line). If
                           REGEXP is given, show a list with line numbers of
@@ -76,7 +81,7 @@ These are the commands of bash-dirstack, each command starts with "ds"::
   dsset [TAG]           : Initialize or use new directory stack file with tag.
                           TAG. If TAG is not given use the standard filename.
   dssetlist             : List existing tags for dsset command.
-
+  
 Your directory stack is kept in a directory in your HOME directory. The default name
 of this directory is "DIRSTACK".
 
@@ -110,7 +115,7 @@ number.
 
 You may go to the last entry (top of stack) without changing the stack with::
 
-  dsngo
+  dsgo
 
 Or you may go to an arbitrary directory from the stack with::
 
@@ -178,5 +183,5 @@ In terminal 1::
 
 In terminal 2::
 
-  dsngo
+  dsgo
 
