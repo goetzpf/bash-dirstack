@@ -117,13 +117,19 @@ function PGO {
 
 function PXGO {
     if [ -z "$1" ]; then
-        echo "REGEXP missing" >&2
-        return 1
+        cat $_BASH_DIRSTACK | nl
+        return 0
     fi
     _BASH_DIRSTACK_MATCHES=$(grep -E -c -- "$1" $_BASH_DIRSTACK)
     if (( 0==$_BASH_DIRSTACK_MATCHES )); then
         echo "no match" >&2
         return 1
+    fi
+    _BASH_DIRSTACK_EXACT_MATCHES=$(grep -E -c -- "$1\$" $_BASH_DIRSTACK)
+    if [ "$_BASH_DIRSTACK_EXACT_MATCHES" == "1" ]; then
+        _BASH_DIRSTACK_LAST=$(pwd)
+        cd $(grep -E -- "$1\$" $_BASH_DIRSTACK)
+        return 0
     fi
     if [ -z "$2" ]; then
         if (( $_BASH_DIRSTACK_MATCHES == 1 )); then
@@ -203,10 +209,11 @@ function PHELP
     echo '                        stack (the last one PLIST shows).'
     echo 'PXGO REGEXP [NUMBER]  : Go to match NUMBER in the list of directories from the'
     echo '                        stack that match regular expression REGEXP. For REGEXP'
-    echo '                        see "man egrep".  If NUMBER is missing and there is'
-    echo '                        only one match, go to that directory.  If NUMBER is'
-    echo '                        missing and there is more than one match, list all'
-    echo '                        matches with line numbers.'
+    echo '                        see "man egrep". If NUMBER is missing and there is'
+    echo '                        only one match or if the pattern matches a line '
+    echo '                        go to that directory.  If NUMBER is missing and there '
+    echo '                        is more than one match, list all matches with line '
+    echo '                        numbers.'
     echo 'PBACK                 : Go back to that last directory before it was changed by'
     echo '                        a bash-dirstack command.'
     echo 'PEDIT                 : Edit directory stack file.'
@@ -218,4 +225,5 @@ function PHELP
     echo
     echo '----------------------------------------------------------------------------'
   }    
+
 
