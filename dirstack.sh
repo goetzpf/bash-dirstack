@@ -186,7 +186,9 @@ function PSET {
     fi
 }
 
-alias PSET-LIST='ls $_BASH_DIRSTACK_DIR'
+function PSET-LIST {
+    ls $_BASH_DIRSTACK_DIR
+}
 
 function PHELP
   { 
