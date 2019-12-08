@@ -20,16 +20,26 @@
 #                      path stack
 # -------------------------------------------------------
 
-_BASH_DIRSTACK_FILENAME="$HOME/DIRSTACK"
+_BASH_DIRSTACK_DIR="$HOME/DIRSTACK"
 
-# path stack data file:
-_BASH_DIRSTACK="$_BASH_DIRSTACK_FILENAME"
+# dir stack data file:
+_BASH_DIRSTACK="$_BASH_DIRSTACK_DIR/default"
 
 # last directory before change:
 _BASH_DIRSTACK_LAST="$HOME"
 
 # last directory before PBACK command:
 _BASH_DIRSTACK_LAST_BEF="$HOME"
+
+if [ ! -d "$_BASH_DIRSTACK_DIR" ]; then
+    if [ -e "$_BASH_DIRSTACK_DIR" ]; then
+        echo "error: cannot create directory $_BASH_DIRSTACK_DIR"
+        echo "since a file with this name exists."
+        echo "You have to delete that file first."
+    else
+        mkdir -p "$_BASH_DIRSTACK_DIR"
+    fi
+fi
 
 if [ ! -e $_BASH_DIRSTACK ]; then
     echo $HOME > "$_BASH_DIRSTACK"
@@ -167,16 +177,16 @@ alias PCLEAR='echo $HOME > $_BASH_DIRSTACK'
 
 function PSET {
     if [ -z "$1" ]; then
-        _BASH_DIRSTACK="$_BASH_DIRSTACK_FILENAME"
+        _BASH_DIRSTACK="$_BASH_DIRSTACK_DIR/default"
     else
-        _BASH_DIRSTACK="$_BASH_DIRSTACK_FILENAME.$1"
+        _BASH_DIRSTACK="$_BASH_DIRSTACK_DIR/$1"
     fi
     if [ ! -e "$_BASH_DIRSTACK" ]; then
         echo $HOME > "$_BASH_DIRSTACK"
     fi
 }
 
-alias PSET-LIST='ls $_BASH_DIRSTACK_FILENAME.* 2>/dev/null | sed -e "s#$_BASH_DIRSTACK_FILENAME\.##"'
+alias PSET-LIST='ls $_BASH_DIRSTACK_DIR'
 
 function PHELP
   { 
