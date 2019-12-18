@@ -53,6 +53,7 @@ function dslist {
     fi
 }
 
+alias dsp='dscdpush'
 alias dspush='dscdpush'
 
 function dscdpush {
@@ -205,6 +206,7 @@ _BASH_DIRSTACK_COMMAND_ARRAY=(  \
     dslist \
     dsngo \
     dspop \
+    dsp \
     dspush \
     dspushcd \
     dsput \
@@ -240,7 +242,7 @@ function dshelp {
     fi
     if [ "$1" == "all" ]; then 
         echo '----------------------------------------------------------------------------'
-        echo 'bash-dirstack 2.0.1'  
+        echo 'bash-dirstack 2.0.2'  
         echo '----------------------------------------------------------------------------'
         echo 'commands:'
         echo ''
@@ -258,6 +260,9 @@ function dshelp {
         echo '                        REGEXP is given, show a list with line numbers of'
         echo '                        matching directories in the directory stack. For REGEXP'
         echo '                        see "man egrep".'
+    fi
+    if [ "$1" == "all" -o "$1" == "dsp" ]; then
+        echo 'dsp [DIR]             : An alias for dscdpush.'
     fi
     if [ "$1" == "all" -o "$1" == "dspush" ]; then
         echo 'dspush [DIR]          : An alias for dscdpush.'
@@ -408,6 +413,7 @@ complete -W "" dsedit
 complete -W "" dsclear
 complete -W "" dsback
 complete -d dscdpush
+complete -d dsp
 complete -d dspush
 complete -d dspushcd
 complete -d dsput

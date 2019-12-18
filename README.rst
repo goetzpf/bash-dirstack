@@ -1,5 +1,5 @@
 ===================
-bash-dirstack 2.0.1
+bash-dirstack 2.0.2
 ===================
 
 An implementation of a persistent directory stack in bash.
