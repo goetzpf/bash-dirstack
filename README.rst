@@ -114,7 +114,7 @@ Bookmarking
 When you operate in your text terminal, each time you want to remember the
 current working directory, enter::
 
-  dscdpush
+  dsp
 
 In order to see what paths were remembered, enter::
 
@@ -129,18 +129,17 @@ You may go to the last entry (top of stack) without changing the stack with::
 
 Or you may go to an arbitrary directory from the stack with::
 
-  dsngo NUMBER
+  dsgo DIR
 
-where NUMBER is a line number shown with "dslist". 
+where DIR is a directory or the first characters of a directory shown by
+"dslist". 
 
 Using string matches and regular expressions
 ++++++++++++++++++++++++++++++++++++++++++++
 
-When your directory stack has many entries, instead of using "dsngo NUMBER" it
-may be easier to use regular expression matching. bash-dirstack uses extended
-POSIX regular expressions. See 
+The "dsgo" command mentioned before actually takes a regular expression as argument, not just a simple string. bash-dirstack uses extended POSIX regular expressions. 
 
-You can see which of the paths lists a given REGEXP with::
+You can see which entries in the directory stack match a given REGEXP with::
 
   dslist REGEXP
 
@@ -153,20 +152,39 @@ You can then select a line with::
 
   dsgo REGEXP NUMBER
 
-Remembering all directories in a workflow
-+++++++++++++++++++++++++++++++++++++++++
+Workflow for remembering directories excluding the current one
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-Instead of "cd DIR" use the dscdpush command::
+Instead of "cd DIR" use the dsc command::
 
-  dscdpush DIR
+  dsc DIR
 
-With every "dscdpush" command, the given directory is put on the stack.
+With every "dsc" command, the current working directory is put on the stack
+before the command changes to the new directory.
+
+You can go back to the previous directory with the command::
+
+  dspop
+
+With this approach, you use bash-dirstack exactly like a stack, but the current
+working directory is not part of the stack.
+
+Workflow for remembering directories including the current one
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Instead of "cd DIR" use the dsp command::
+
+  dsp DIR
+
+With every "dsp" command, the current working directory is changed to DIR and
+the given directory is put on the stack.
 
 You can go back to the previous directory with the command::
 
   dsdropgo
 
-With this approach, you use bash-dirstack exactly like a stack.
+With this approach, you use bash-dirstack exactly like a stack where the
+current working directory is always on the top of the stack.
 
 Using more than one directory stack
 +++++++++++++++++++++++++++++++++++
