@@ -113,9 +113,9 @@ Bookmarking
 +++++++++++
 
 When you operate in your text terminal, each time you want to remember the
-current working directory, enter::
+current working directory, enter this command ("dsp" is short for "dspush")::
 
-  dscdpush
+  dsp
 
 In order to see what paths were remembered, enter::
 
@@ -133,12 +133,15 @@ Or you may go to an arbitrary directory from the stack with::
   dsgo DIR
 
 where DIR is a directory or the first characters of a directory shown by
-"dslist". 
+"dslist". Note that dsgo has even more capabilities. See also the following
+chapter.
 
 Using string matches and regular expressions
 ++++++++++++++++++++++++++++++++++++++++++++
 
-The "dsgo" command mentioned before actually takes a regular expression as argument, not just a simple string. bash-dirstack uses extended POSIX regular expressions. 
+The "dsgo" command mentioned before actually takes a regular expression as
+argument, not just a simple string. bash-dirstack uses extended POSIX regular
+expressions. 
 
 You can see which entries in the directory stack match a given REGEXP with::
 
@@ -170,6 +173,10 @@ You can go back to the previous directory with the command::
 With this approach, you use bash-dirstack exactly like a stack, but the current
 working directory is not part of the stack.
 
+If you want to save the current working directory on the stack, enter::
+
+  dsp
+
 Workflow for remembering directories including the current one
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -178,7 +185,7 @@ Instead of "cd DIR" use the dscdpush command::
   dscdpush DIR
 
 With every "dscdpush" command, the current working directory is changed to DIR and
-the given directory is put on the stack.
+the DIR is put on the stack.
 
 You can go back to the previous directory with the command::
 
@@ -208,7 +215,7 @@ second terminal do the following:
 
 In terminal 1::
 
-  dscdpush
+  dsp
 
 In terminal 2::
 
