@@ -49,9 +49,11 @@ These are the commands of bash-dirstack, each command starts with "ds"::
   dscdpush [DIR]        : If DIR is given, go to DIR and put it on the top of the
                           directory stack. If DIR is not given, push the current
                           working directory on top of directory stack.
-  dsc DIR               : An alias for dspushcd.
-  dspushcd DIR          : Put the current working directory on the stack and
-                          change to DIR.
+  dsp [DIR]             : An alias for dspushcd.
+  dspush [DIR]          : An alias for dspushcd.
+  dspushcd [DIR]        : Put the current working directory on the top of the 
+                          directory stack. Then, if DIR is given, go to directory 
+                          DIR.
   dsput DIR             : Put directory DIR on top of the directory stack but do
                           not change the current working directory.
   dspop                 : Remove top of the directory stack and go to that
@@ -154,11 +156,11 @@ You can then select a line with::
 Workflow for remembering directories excluding the current one
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-Instead of "cd DIR" use the dsc command::
+Instead of "cd DIR" use the dsp command::
 
-  dsc DIR
+  dsp DIR
 
-With every "dsc" command, the current working directory is put on the stack
+With every "dsp" command, the current working directory is put on the stack
 before the command changes to the new directory.
 
 You can go back to the previous directory with the command::

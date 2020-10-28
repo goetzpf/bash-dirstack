@@ -66,12 +66,13 @@ function dscdpush {
     cd "$1" && pwd >> $_BASH_DIRSTACK
 }
 
-alias dsc="dspushcd"
+alias dsp="dspushcd"
+alias dspush="dspushcd"
 
 function dspushcd {
     if [ -z "$1" ]; then
-        echo "error, directory missing" >&2
-        return 1
+        pwd >> $_BASH_DIRSTACK
+        return 0
     fi
     if [ ! -d "$1" ]; then
         echo "error, $1 is not a directory" >&2
@@ -205,7 +206,8 @@ _BASH_DIRSTACK_COMMAND_ARRAY=(  \
     dslist \
     dsngo \
     dspop \
-    dsc \
+    dsp \
+    dspush \
     dspushcd \
     dsput \
     dsset \
@@ -271,12 +273,16 @@ function dshelp {
         echo '                        directory stack. If DIR is not given, push the current'
         echo '                        working directory on top of directory stack.'
     fi
-    if [ "$1" == "all-raw" -o "$1" == "dsc" ]; then
-        echo 'dsc DIR               : An alias for dspushcd.'
+    if [ "$1" == "all-raw" -o "$1" == "dsp" ]; then
+        echo 'dsp [DIR]             : An alias for dspushcd.'
+    fi
+    if [ "$1" == "all-raw" -o "$1" == "dspush" ]; then
+        echo 'dspush [DIR]          : An alias for dspushcd.'
     fi
     if [ "$1" == "all-raw" -o "$1" == "dspushcd" ]; then
-        echo 'dspushcd DIR          : Put the current working directory on the stack and'
-        echo '                        change to DIR.'
+        echo 'dspushcd [DIR]        : Put the current working directory on the top of the '
+        echo '                        directory stack. Then, if DIR is given, go to directory '
+        echo '                        DIR.'
     fi
     if [ "$1" == "all-raw" -o "$1" == "dsput" ]; then
         echo 'dsput DIR             : Put directory DIR on top of the directory stack but do'
@@ -416,7 +422,8 @@ complete -W "" dsclear
 complete -W "" dsback
 complete -d dscdpush
 complete -d dspushcd
-complete -d dsc
+complete -d dsp
+complete -d dspush
 complete -d dsput
 complete -W "" dssetlist
 complete -F _dsset_completions dsset
