@@ -46,7 +46,6 @@ These are the commands of bash-dirstack, each command starts with "ds"::
                           REGEXP is given, show a list with line numbers of
                           matching directories in the directory stack. For REGEXP
                           see "man egrep".
-  dsp [DIR]             : An alias for dscdpush.
   dscdpush [DIR]        : If DIR is given, go to DIR and put it on the top of the
                           directory stack. If DIR is not given, push the current
                           working directory on top of directory stack.
@@ -114,7 +113,7 @@ Bookmarking
 When you operate in your text terminal, each time you want to remember the
 current working directory, enter::
 
-  dsp
+  dscdpush
 
 In order to see what paths were remembered, enter::
 
@@ -172,11 +171,11 @@ working directory is not part of the stack.
 Workflow for remembering directories including the current one
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-Instead of "cd DIR" use the dsp command::
+Instead of "cd DIR" use the dscdpush command::
 
-  dsp DIR
+  dscdpush DIR
 
-With every "dsp" command, the current working directory is changed to DIR and
+With every "dscdpush" command, the current working directory is changed to DIR and
 the given directory is put on the stack.
 
 You can go back to the previous directory with the command::

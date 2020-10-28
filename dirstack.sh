@@ -53,8 +53,6 @@ function dslist {
     fi
 }
 
-alias dsp='dscdpush'
-
 function dscdpush {
     if [ -z "$1" ]; then
         pwd >> $_BASH_DIRSTACK
@@ -207,7 +205,6 @@ _BASH_DIRSTACK_COMMAND_ARRAY=(  \
     dslist \
     dsngo \
     dspop \
-    dsp \
     dsc \
     dspushcd \
     dsput \
@@ -268,9 +265,6 @@ function dshelp {
         echo '                        REGEXP is given, show a list with line numbers of'
         echo '                        matching directories in the directory stack. For REGEXP'
         echo '                        see "man egrep".'
-    fi
-    if [ "$1" == "all-raw" -o "$1" == "dsp" ]; then
-        echo 'dsp [DIR]             : An alias for dscdpush.'
     fi
     if [ "$1" == "all-raw" -o "$1" == "dscdpush" ]; then
         echo 'dscdpush [DIR]        : If DIR is given, go to DIR and put it on the top of the'
@@ -421,7 +415,6 @@ complete -W "" dsedit
 complete -W "" dsclear
 complete -W "" dsback
 complete -d dscdpush
-complete -d dsp
 complete -d dspushcd
 complete -d dsc
 complete -d dsput
