@@ -46,10 +46,11 @@ These are the commands of bash-dirstack, each command starts with "ds"::
                           REGEXP is given, show a list with line numbers of
                           matching directories in the directory stack. For REGEXP
                           see "man egrep".
-  dspush [DIR]          : An alias for dscdpush.
+  dsp [DIR]             : An alias for dscdpush.
   dscdpush [DIR]        : If DIR is given, go to DIR and put it on the top of the
                           directory stack. If DIR is not given, push the current
                           working directory on top of directory stack.
+  dsc DIR               : An alias for dspushcd.
   dspushcd DIR          : Put the current working directory on the stack and
                           change to DIR.
   dsput DIR             : Put directory DIR on top of the directory stack but do
@@ -81,7 +82,7 @@ These are the commands of bash-dirstack, each command starts with "ds"::
   dsset [TAG]           : Initialize or use new directory stack file with tag.
                           TAG. If TAG is not given use the standard filename.
   dssetlist             : List existing tags for dsset command.
-  
+
 Your directory stack is kept in a directory in your HOME directory. The default name
 of this directory is "DIRSTACK".
 
