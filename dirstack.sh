@@ -54,7 +54,6 @@ function dslist {
 }
 
 alias dsp='dscdpush'
-alias dspush='dscdpush'
 
 function dscdpush {
     if [ -z "$1" ]; then
@@ -68,6 +67,8 @@ function dscdpush {
     _BASH_DIRSTACK_LAST=$(pwd)
     cd "$1" && pwd >> $_BASH_DIRSTACK
 }
+
+alias dsc="dspushcd"
 
 function dspushcd {
     if [ -z "$1" ]; then
@@ -207,7 +208,7 @@ _BASH_DIRSTACK_COMMAND_ARRAY=(  \
     dsngo \
     dspop \
     dsp \
-    dspush \
+    dsc \
     dspushcd \
     dsput \
     dsset \
@@ -271,13 +272,13 @@ function dshelp {
     if [ "$1" == "all-raw" -o "$1" == "dsp" ]; then
         echo 'dsp [DIR]             : An alias for dscdpush.'
     fi
-    if [ "$1" == "all-raw" -o "$1" == "dspush" ]; then
-        echo 'dspush [DIR]          : An alias for dscdpush.'
-    fi
     if [ "$1" == "all-raw" -o "$1" == "dscdpush" ]; then
         echo 'dscdpush [DIR]        : If DIR is given, go to DIR and put it on the top of the'
         echo '                        directory stack. If DIR is not given, push the current'
         echo '                        working directory on top of directory stack.'
+    fi
+    if [ "$1" == "all-raw" -o "$1" == "dsc" ]; then
+        echo 'dsc DIR               : An alias for dspushcd.'
     fi
     if [ "$1" == "all-raw" -o "$1" == "dspushcd" ]; then
         echo 'dspushcd DIR          : Put the current working directory on the stack and'
@@ -421,8 +422,8 @@ complete -W "" dsclear
 complete -W "" dsback
 complete -d dscdpush
 complete -d dsp
-complete -d dspush
 complete -d dspushcd
+complete -d dsc
 complete -d dsput
 complete -W "" dssetlist
 complete -F _dsset_completions dsset
