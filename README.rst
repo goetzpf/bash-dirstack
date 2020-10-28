@@ -37,34 +37,34 @@ Usage
 These are the commands of bash-dirstack, each command starts with "ds"::
 
   help:
-
+  
       dshelp TOPIC          : Print help.
                               When TOPIC is "all", print complete help, when
                               TOPIC is "list", list all known commands. When
                               TOPIC is neither "all" nor "list", interpret it as
                               a name of a command and display help for that
                               command.
-
+  
   Push/Pop *without* current working dir on the stack:
-
+  
       dsp [DIR]             : An alias for dspush.
       dspush [DIR]          : Put the current working directory on the top of the
                               directory stack. Then, if DIR is given, go to
                               directory DIR.
       dspop                 : Remove top of the directory stack and go to that
                               directory.
-
+  
   Push/Pop *with* current working dir on the stack:
-
+  
       dsPop                 : Remove top of the directory stack and go to the
                               directory that is now the top of the stack.
       dsPush [DIR]          : If DIR is given, go to DIR and put it on the top of
                               the directory stack. If DIR is not given, push the
                               current working directory on top of directory
                               stack.
-
+  
   Go to arbitrary dir from the stack:
-
+  
       dsngo [NUMBER]        : Go to directory in line NUMBER in the directory
                               stack. The line numbers can be seen with dslist. If
                               NUMBER is omitted, go to the directory that is the
@@ -78,17 +78,17 @@ These are the commands of bash-dirstack, each command starts with "ds"::
                               line numbers.  IF REGEXP and NUMBER are missing, go
                               to the directory that is the top of the stack (the
                               last one dslist shows).
-
+  
   Query the directory stack:
-
+  
       dslist [REGEXP]       : Show directory stack with line numbers. The stack
                               is shown from bottom (first line) to top (last
                               line). If REGEXP is given, show a list with line
                               numbers of matching directories in the directory
                               stack. For REGEXP see "man egrep".
-
+  
   Modify the directory stack:
-
+  
       dsput DIR             : Put directory DIR on top of the directory stack but
                               do not change the current working directory.
       dsdrop                : Remove top of the directory stack but do not change
@@ -96,15 +96,15 @@ These are the commands of bash-dirstack, each command starts with "ds"::
       dsedit                : Edit directory stack file.
       dsclear               : Initialize the directory stack with a single entry,
                               which is your home directory.
-
+  
   Manage more than one directory stack:
-
-      dsset [TAG]           : Initialize or use new directory stack file with
-                              tag TAG. If TAG is not given use the standard filename.
+  
+      dsset [TAG]           : Initialize or use new directory stack file with tag TAG.
+                              If TAG is not given show thw current directory stack name.
       dssetlist             : List existing tags for dsset command.
-
+  
   Revert the last directory change:
-
+  
       dsback                : Go back to that last directory before it was
                               changed by a bash-dirstack command.
 

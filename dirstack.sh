@@ -181,7 +181,8 @@ alias dsclear='echo $HOME > $_BASH_DIRSTACK'
 
 function dsset {
     if [ -z "$1" ]; then
-        _BASH_DIRSTACK="$_BASH_DIRSTACK_DIR/default"
+        echo "Current directory stack: $(basename $_BASH_DIRSTACK)"
+        return
     else
         _BASH_DIRSTACK="$_BASH_DIRSTACK_DIR/$1"
     fi
@@ -356,8 +357,8 @@ function dshelp {
         echo ''
     fi
     if [ "$1" == "all-raw" -o "$1" == "dsset" ]; then
-        echo '    dsset [TAG]           : Initialize or use new directory stack file with'
-        echo '                            tag TAG. If TAG is not given use the standard filename.'
+        echo '    dsset [TAG]           : Initialize or use new directory stack file with tag TAG.'
+        echo '                            If TAG is not given show thw current directory stack name.'
     fi
     if [ "$1" == "all-raw" -o "$1" == "dssetlist" ]; then
         echo '    dssetlist             : List existing tags for dsset command.'
