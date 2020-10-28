@@ -36,56 +36,80 @@ Usage
 
 These are the commands of bash-dirstack, each command starts with "ds"::
 
-  dshelp TOPIC          : Print help. 
-                          When TOPIC is "all", print complete help, when TOPIC 
-                          is "list", list all known commands. When TOPIC is neither
-                          "all" nor "list", interpret it as a name of a command and
-                          display help for that command.
-  dslist [REGEXP]       : Show directory stack with line numbers. The stack is
-                          shown from bottom (first line) to top (last line). If
-                          REGEXP is given, show a list with line numbers of
-                          matching directories in the directory stack. For REGEXP
-                          see "man egrep".
-  dscdpush [DIR]        : If DIR is given, go to DIR and put it on the top of the
-                          directory stack. If DIR is not given, push the current
-                          working directory on top of directory stack.
-  dsp [DIR]             : An alias for dspushcd.
-  dspush [DIR]          : An alias for dspushcd.
-  dspushcd [DIR]        : Put the current working directory on the top of the 
-                          directory stack. Then, if DIR is given, go to directory 
-                          DIR.
-  dsput DIR             : Put directory DIR on top of the directory stack but do
-                          not change the current working directory.
-  dspop                 : Remove top of the directory stack and go to that
-                          directory.
-  dsdropgo              : Remove top of the directory stack and go to the
-                          directory that is now the top of the stack.
-  dsdrop                : Remove top of the directory stack but do not change the
-                          current working directory.
-  dsngo [NUMBER]        : Go to directory in line NUMBER in the directory stack.
-                          The line numbers can be seen with dslist. If NUMBER is
-                          omitted, go to the directory that is the top of the
-                          stack (the last one dslist shows).
-  dsgo [REGEXP] [NUMBER]: Go to match NUMBER in the list of directories from the
-                          stack that match regular expression REGEXP. For REGEXP
-                          see "man egrep". If NUMBER is missing and there is only
-                          one match or if the pattern matches a line go to that
-                          directory. If NUMBER is missing and there is more than
-                          one match, list all matches with line numbers.
-                          IF REGEXP and NUMBER are missing, go to the directory 
-                          that is the top of the stack (the last one dslist 
-                          shows).
-  dsback                : Go back to that last directory before it was changed by
-                          a bash-dirstack command.
-  dsedit                : Edit directory stack file.
-  dsclear               : Initialize the directory stack with a single entry,
-                          which is your home directory.
-  dsset [TAG]           : Initialize or use new directory stack file with tag.
-                          TAG. If TAG is not given use the standard filename.
-  dssetlist             : List existing tags for dsset command.
+  help:
 
-Your directory stack is kept in a directory in your HOME directory. The default name
-of this directory is "DIRSTACK".
+      dshelp TOPIC          : Print help.
+                              When TOPIC is "all", print complete help, when
+                              TOPIC is "list", list all known commands. When
+                              TOPIC is neither "all" nor "list", interpret it as
+                              a name of a command and display help for that
+                              command.
+
+  Push/Pop *without* current working dir on the stack:
+
+      dsp [DIR]             : An alias for dspush.
+      dspush [DIR]          : Put the current working directory on the top of the
+                              directory stack. Then, if DIR is given, go to
+                              directory DIR.
+      dspop                 : Remove top of the directory stack and go to that
+                              directory.
+
+  Push/Pop *with* current working dir on the stack:
+
+      dsPop                 : Remove top of the directory stack and go to the
+                              directory that is now the top of the stack.
+      dsPush [DIR]          : If DIR is given, go to DIR and put it on the top of
+                              the directory stack. If DIR is not given, push the
+                              current working directory on top of directory
+                              stack.
+
+  Go to arbitrary dir from the stack:
+
+      dsngo [NUMBER]        : Go to directory in line NUMBER in the directory
+                              stack. The line numbers can be seen with dslist. If
+                              NUMBER is omitted, go to the directory that is the
+                              top of the stack (the last one dslist shows).
+      dsgo [REGEXP] [NUMBER]: Go to match NUMBER in the list of directories from
+                              the stack that match regular expression REGEXP. For
+                              REGEXP see "man egrep".  If NUMBER is missing and
+                              there is only one match or if the pattern matches a
+                              line go to that directory. If NUMBER is missing and
+                              there is more than one match, list all matches with
+                              line numbers.  IF REGEXP and NUMBER are missing, go
+                              to the directory that is the top of the stack (the
+                              last one dslist shows).
+
+  Query the directory stack:
+
+      dslist [REGEXP]       : Show directory stack with line numbers. The stack
+                              is shown from bottom (first line) to top (last
+                              line). If REGEXP is given, show a list with line
+                              numbers of matching directories in the directory
+                              stack. For REGEXP see "man egrep".
+
+  Modify the directory stack:
+
+      dsput DIR             : Put directory DIR on top of the directory stack but
+                              do not change the current working directory.
+      dsdrop                : Remove top of the directory stack but do not change
+                              the current working directory.
+      dsedit                : Edit directory stack file.
+      dsclear               : Initialize the directory stack with a single entry,
+                              which is your home directory.
+
+  Manage more than one directory stack:
+
+      dsset [TAG]           : Initialize or use new directory stack file with
+                              tag TAG. If TAG is not given use the standard filename.
+      dssetlist             : List existing tags for dsset command.
+
+  Revert the last directory change:
+
+      dsback                : Go back to that last directory before it was
+                              changed by a bash-dirstack command.
+
+Your directory stack is kept in a directory in your HOME directory. The default
+name of this directory is "DIRSTACK".
 
 Command completion
 ------------------
@@ -98,7 +122,7 @@ command with the argument displayed so far is executed.
 
 How it works  
 ------------
-    
+
 Your directory stack is kept in a directory in your HOME directory. The default
 name of this directory is "DIRSTACK", the default filename of the file itself
 is "default".
@@ -112,10 +136,10 @@ Examples
 Bookmarking
 +++++++++++
 
-When you operate in your text terminal, each time you want to remember the
-current working directory, enter this command ("dsp" is short for "dspush")::
+When you work in your text terminal, each time you want to remember the
+current working directory, enter this command::
 
-  dsp
+  dspush
 
 In order to see what paths were remembered, enter::
 
@@ -134,7 +158,7 @@ Or you may go to an arbitrary directory from the stack with::
 
 where DIR is a directory or the first characters of a directory shown by
 "dslist". Note that dsgo has even more capabilities. See also the following
-chapter.
+chapter. You may also want to use command "dsngo".
 
 Using string matches and regular expressions
 ++++++++++++++++++++++++++++++++++++++++++++
@@ -159,11 +183,11 @@ You can then select a line with::
 Workflow for remembering directories excluding the current one
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-Instead of "cd DIR" use the dsp command::
+Instead of "cd DIR" use the dspush command::
 
-  dsp DIR
+  dspush DIR
 
-With every "dsp" command, the current working directory is put on the stack
+With every "dspush" command, the current working directory is put on the stack
 before the command changes to the new directory.
 
 You can go back to the previous directory with the command::
@@ -175,21 +199,25 @@ working directory is not part of the stack.
 
 If you want to save the current working directory on the stack, enter::
 
-  dsp
+  dspush
+
+Note that you can also enter "dsp" instead of "dspush".
 
 Workflow for remembering directories including the current one
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-Instead of "cd DIR" use the dscdpush command::
+Instead of "cd DIR" use the dsPush command. Note that this command with capital
+"P" is different from "dspush" as described above::
 
-  dscdpush DIR
+  dsPush DIR
 
-With every "dscdpush" command, the current working directory is changed to DIR and
-the DIR is put on the stack.
+With every "dsPush" command, the current working directory is changed to DIR and
+then DIR is put on the stack.
 
-You can go back to the previous directory with the command::
+You can go back to the previous directory with the dsPop command. Note that
+this command with capital "P" is different from "dspop" as described above::
 
-  dsdropgo
+  dsPop
 
 With this approach, you use bash-dirstack exactly like a stack where the
 current working directory is always on the top of the stack.
@@ -215,7 +243,7 @@ second terminal do the following:
 
 In terminal 1::
 
-  dsp
+  dspush
 
 In terminal 2::
 
