@@ -228,7 +228,7 @@ function dshelp {
         return
     else
         rx="\\b$1\\b"
-        if [[ ! "all list $_BASH_DIRSTACK_COMMANDS" =~ $rx ]]; then
+        if [[ ! "all all-raw list $_BASH_DIRSTACK_COMMANDS" =~ $rx ]]; then
             echo "unkown command or TOPIC"
             echo "TOPIC must be 'all', 'list' or a known command"
             return
@@ -240,65 +240,72 @@ function dshelp {
         echo "$_BASH_DIRSTACK_COMMANDS" | fold -w 60 -s | column -t
         return
     fi
-    if [ "$1" == "all" ]; then 
+    if [ "$1" == "all" ]; then
+        # if the "less" is present, use it:
+        if less -V >/dev/null 2>&1; then
+            dshelp all-raw | less
+            return
+        fi
+    fi
+    if [ "$1" == "all-raw" ]; then 
         echo '----------------------------------------------------------------------------'
         echo 'bash-dirstack 2.0.2'  
         echo '----------------------------------------------------------------------------'
         echo 'commands:'
         echo ''
     fi
-    if [ "$1" == "all" -o "$1" == "dshelp" ]; then
+    if [ "$1" == "all-raw" -o "$1" == "dshelp" ]; then
         echo 'dshelp TOPIC          : Print help. '
         echo '                        When TOPIC is "all", print complete help, when TOPIC '
         echo '                        is "list", list all known commands. When TOPIC is neither'
         echo '                        "all" nor "list", interpret it as a name of a command and'
         echo '                        display help for that command.'
     fi
-    if [ "$1" == "all" -o "$1" == "dslist" ]; then
+    if [ "$1" == "all-raw" -o "$1" == "dslist" ]; then
         echo 'dslist [REGEXP]       : Show directory stack with line numbers. The stack is'
         echo '                        shown from bottom (first line) to top (last line). If'
         echo '                        REGEXP is given, show a list with line numbers of'
         echo '                        matching directories in the directory stack. For REGEXP'
         echo '                        see "man egrep".'
     fi
-    if [ "$1" == "all" -o "$1" == "dsp" ]; then
+    if [ "$1" == "all-raw" -o "$1" == "dsp" ]; then
         echo 'dsp [DIR]             : An alias for dscdpush.'
     fi
-    if [ "$1" == "all" -o "$1" == "dspush" ]; then
+    if [ "$1" == "all-raw" -o "$1" == "dspush" ]; then
         echo 'dspush [DIR]          : An alias for dscdpush.'
     fi
-    if [ "$1" == "all" -o "$1" == "dscdpush" ]; then
+    if [ "$1" == "all-raw" -o "$1" == "dscdpush" ]; then
         echo 'dscdpush [DIR]        : If DIR is given, go to DIR and put it on the top of the'
         echo '                        directory stack. If DIR is not given, push the current'
         echo '                        working directory on top of directory stack.'
     fi
-    if [ "$1" == "all" -o "$1" == "dspushcd" ]; then
+    if [ "$1" == "all-raw" -o "$1" == "dspushcd" ]; then
         echo 'dspushcd DIR          : Put the current working directory on the stack and'
         echo '                        change to DIR.'
     fi
-    if [ "$1" == "all" -o "$1" == "dsput" ]; then
+    if [ "$1" == "all-raw" -o "$1" == "dsput" ]; then
         echo 'dsput DIR             : Put directory DIR on top of the directory stack but do'
         echo '                        not change the current working directory.'
     fi
-    if [ "$1" == "all" -o "$1" == "dspop" ]; then
+    if [ "$1" == "all-raw" -o "$1" == "dspop" ]; then
         echo 'dspop                 : Remove top of the directory stack and go to that'
         echo '                        directory.'
     fi
-    if [ "$1" == "all" -o "$1" == "dsdropgo" ]; then
+    if [ "$1" == "all-raw" -o "$1" == "dsdropgo" ]; then
         echo 'dsdropgo              : Remove top of the directory stack and go to the'
         echo '                        directory that is now the top of the stack.'
     fi
-    if [ "$1" == "all" -o "$1" == "dsdrop" ]; then
+    if [ "$1" == "all-raw" -o "$1" == "dsdrop" ]; then
         echo 'dsdrop                : Remove top of the directory stack but do not change the'
         echo '                        current working directory.'
     fi
-    if [ "$1" == "all" -o "$1" == "dsngo" ]; then
+    if [ "$1" == "all-raw" -o "$1" == "dsngo" ]; then
         echo 'dsngo [NUMBER]        : Go to directory in line NUMBER in the directory stack.'
         echo '                        The line numbers can be seen with dslist. If NUMBER is'
         echo '                        omitted, go to the directory that is the top of the'
         echo '                        stack (the last one dslist shows).'
     fi
-    if [ "$1" == "all" -o "$1" == "dsgo" ]; then
+    if [ "$1" == "all-raw" -o "$1" == "dsgo" ]; then
         echo 'dsgo [REGEXP] [NUMBER]: Go to match NUMBER in the list of directories from the'
         echo '                        stack that match regular expression REGEXP. For REGEXP'
         echo '                        see "man egrep". If NUMBER is missing and there is only'
@@ -309,25 +316,25 @@ function dshelp {
         echo '                        that is the top of the stack (the last one dslist '
         echo '                        shows).'
     fi
-    if [ "$1" == "all" -o "$1" == "dsback" ]; then
+    if [ "$1" == "all-raw" -o "$1" == "dsback" ]; then
         echo 'dsback                : Go back to that last directory before it was changed by'
         echo '                        a bash-dirstack command.'
     fi
-    if [ "$1" == "all" -o "$1" == "dsedit" ]; then
+    if [ "$1" == "all-raw" -o "$1" == "dsedit" ]; then
         echo 'dsedit                : Edit directory stack file.'
     fi
-    if [ "$1" == "all" -o "$1" == "dsclear" ]; then
+    if [ "$1" == "all-raw" -o "$1" == "dsclear" ]; then
         echo 'dsclear               : Initialize the directory stack with a single entry,'
         echo '                        which is your home directory.'
     fi
-    if [ "$1" == "all" -o "$1" == "dsset" ]; then
+    if [ "$1" == "all-raw" -o "$1" == "dsset" ]; then
         echo 'dsset [TAG]           : Initialize or use new directory stack file with tag.'
         echo '                        TAG. If TAG is not given use the standard filename.'
     fi
-    if [ "$1" == "all" -o "$1" == "dssetlist" ]; then
+    if [ "$1" == "all-raw" -o "$1" == "dssetlist" ]; then
         echo 'dssetlist             : List existing tags for dsset command.'
     fi
-    if [ "$1" == "all" ]; then
+    if [ "$1" == "all-raw" ]; then
         echo ''
         echo '----------------------------------------------------------------------------'
     fi
