@@ -179,6 +179,13 @@ function dsback {
 alias dsedit='$EDITOR $_BASH_DIRSTACK'
 alias dsclear='echo $HOME > $_BASH_DIRSTACK'
 
+function dssort {
+    # LC_COLLATE must be set to "C" in order for sort
+    # not to ignore non-alphanumeric characters:
+    LC_COLLATE=C sort -u $_BASH_DIRSTACK > $_BASH_DIRSTACK_DIR/TMP
+    cp -a $_BASH_DIRSTACK_DIR/TMP $_BASH_DIRSTACK
+}
+
 function dsset {
     if [ -z "$1" ]; then
         echo "Current directory stack: $(basename $_BASH_DIRSTACK)"
@@ -212,6 +219,7 @@ _BASH_DIRSTACK_COMMAND_ARRAY=(  \
     dsput \
     dsset \
     dssetlist \
+    dssort \
 )
 
 _BASH_DIRSTACK_COMMANDS="${_BASH_DIRSTACK_COMMAND_ARRAY[@]}"
@@ -351,6 +359,11 @@ function dshelp {
         echo '    dsclear               : Initialize the directory stack with a single entry,'
         echo '                            which is your home directory.'
     fi
+    if [ "$1" == "all-raw" -o "$1" == "dssort" ]; then
+        echo '    dssort                : Apply "sort -u" to the directory stack file. This means'
+        echo '                            that all entries are sorted and unique. Note that there'
+        echo '                            is no undo command for this.'
+    fi
     if [ "$1" == "all-raw" ]; then 
         echo ''
         echo 'Manage more than one directory stack:'
@@ -456,6 +469,7 @@ complete -W "" dsPop
 complete -W "" dsdrop
 complete -W "" dsedit
 complete -W "" dsclear
+complete -W "" dssort
 complete -W "" dsback
 complete -d dsPush
 complete -d dsp

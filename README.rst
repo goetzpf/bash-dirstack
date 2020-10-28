@@ -96,6 +96,9 @@ These are the commands of bash-dirstack, each command starts with "ds"::
       dsedit                : Edit directory stack file.
       dsclear               : Initialize the directory stack with a single entry,
                               which is your home directory.
+      dssort                : Apply "sort -u" to the directory stack file. This means
+                              that all entries are sorted and unique. Note that there
+                              is no undo command for this.
   
   Manage more than one directory stack:
   
