@@ -1,6 +1,6 @@
-===================
-bash-dirstack 2.0.2
-===================
+=================
+bash-dirstack 3.0
+=================
 
 An implementation of a persistent directory stack in bash.
 

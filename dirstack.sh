@@ -20,6 +20,8 @@
 #                      path stack
 # -------------------------------------------------------
 
+_BASH_DIRSTACK_VERSION="3.0"
+
 _BASH_DIRSTACK_DIR="$HOME/DIRSTACK"
 
 # dir stack data file:
@@ -257,7 +259,7 @@ function dshelp {
     fi
     if [ "$1" == "all-raw" ]; then 
         echo '----------------------------------------------------------------------------'
-        echo 'bash-dirstack 2.0.2'  
+        echo "bash-dirstack $_BASH_DIRSTACK_VERSION"
         echo '----------------------------------------------------------------------------'
         echo ''
     fi
