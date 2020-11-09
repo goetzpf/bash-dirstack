@@ -255,6 +255,9 @@ function dshelp {
         if less -V >/dev/null 2>&1; then
             dshelp all-raw | less
             return
+        else
+            # set $1 to "all-raw":
+            set -- "all-raw"
         fi
     fi
     if [ "$1" == "all-raw" ]; then 
