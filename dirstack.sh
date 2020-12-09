@@ -20,12 +20,11 @@
 #                      path stack
 # -------------------------------------------------------
 
-_BASH_DIRSTACK_VERSION="3.0"
+_BASH_DIRSTACK_VERSION="3.1"
 
 _BASH_DIRSTACK_DIR="$HOME/DIRSTACK"
 
-# dir stack data file:
-_BASH_DIRSTACK="$_BASH_DIRSTACK_DIR/default"
+_BASH_DIRSTACK_CONFIG="$_BASH_DIRSTACK_DIR/CONFIG"
 
 # last directory before change:
 _BASH_DIRSTACK_LAST="$HOME"
@@ -38,11 +37,22 @@ if [ ! -d "$_BASH_DIRSTACK_DIR" ]; then
         echo "error: cannot create directory $_BASH_DIRSTACK_DIR"
         echo "since a file with this name exists."
         echo "You have to delete that file first."
+        exit 0
     else
         mkdir -p "$_BASH_DIRSTACK_DIR"
     fi
 fi
 
+if [ ! -e $_BASH_DIRSTACK_CONFIG ]; then
+    # create config file if it doesn't exist,
+    # use "default" as the default dir stack data file:
+    echo "_BASH_DIRSTACK=$_BASH_DIRSTACK_DIR/default" > "$_BASH_DIRSTACK_CONFIG"
+fi
+
+# This sets the _BASH_DIRSTACK variable:
+. "$_BASH_DIRSTACK_CONFIG"
+
+# Create dir stack data file if it doesn't exist:
 if [ ! -e $_BASH_DIRSTACK ]; then
     echo $HOME > "$_BASH_DIRSTACK"
 fi
@@ -192,12 +202,24 @@ function dsset {
     if [ -z "$1" ]; then
         echo "Current directory stack: $(basename $_BASH_DIRSTACK)"
         return
-    else
-        _BASH_DIRSTACK="$_BASH_DIRSTACK_DIR/$1"
     fi
+    if [ ! -e "$_BASH_DIRSTACK_DIR/$1" ]; then
+        echo "Directory stack $1 doesn't exist yet."
+        read -p "Create it ? (Y/N) " -n 1 -r
+        echo
+        if [ "$REPLY" = "Y" -o "$REPLY" = "y" ]; then
+            echo "Directory stack $1 is created."
+        else
+            echo "Aborted"
+            return
+        fi
+    fi
+    _BASH_DIRSTACK="$_BASH_DIRSTACK_DIR/$1"
     if [ ! -e "$_BASH_DIRSTACK" ]; then
         echo $HOME > "$_BASH_DIRSTACK"
     fi
+    # remember this in the CONFIG file:
+    sed -i "$_BASH_DIRSTACK_CONFIG" -e "s;^\(_BASH_DIRSTACK=\).*;\1$_BASH_DIRSTACK;"
 }
 
 function dssetlist {
@@ -377,6 +399,9 @@ function dshelp {
     if [ "$1" == "all-raw" -o "$1" == "dsset" ]; then
         echo '    dsset [TAG]           : Initialize or use new directory stack file with tag TAG.'
         echo '                            If TAG is not given show thw current directory stack name.'
+        echo '                            If the stack file does not yet exist, the program asks for'
+        echo '                            confirmation. The TAG is remembered globally in file'
+        echo '                            "CONFIG" as new default for the directory stack file.'
     fi
     if [ "$1" == "all-raw" -o "$1" == "dssetlist" ]; then
         echo '    dssetlist             : List existing tags for dsset command.'
@@ -453,9 +478,9 @@ function _dsset_completions {
     arg="${COMP_WORDS[$COMP_CWORD]}"
     IFS=$'\n'
     if [ -z "$arg" ]; then
-        COMPREPLY=( $(ls -1 $_BASH_DIRSTACK_DIR) )
+        COMPREPLY=( $(ls -1 $_BASH_DIRSTACK_DIR | grep -w -v CONFIG) )
     else
-        COMPREPLY=( $(ls -1 $_BASH_DIRSTACK_DIR | grep "^$arg") )
+        COMPREPLY=( $(ls -1 $_BASH_DIRSTACK_DIR | grep -w -v CONFIG | grep "^$arg") )
     fi
     IFS=
 }

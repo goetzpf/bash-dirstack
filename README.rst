@@ -1,5 +1,5 @@
 =================
-bash-dirstack 3.0
+bash-dirstack 3.1
 =================
 
 An implementation of a persistent directory stack in bash.
@@ -104,6 +104,9 @@ These are the commands of bash-dirstack, each command starts with "ds"::
   
       dsset [TAG]           : Initialize or use new directory stack file with tag TAG.
                               If TAG is not given show thw current directory stack name.
+                              If the stack file does not yet exist, the program asks for
+                              confirmation. The TAG is remembered globally in file
+                              "CONFIG" as new default for the directory stack file.
       dssetlist             : List existing tags for dsset command.
   
   Revert the last directory change:
