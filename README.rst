@@ -2,7 +2,7 @@
 bash-dirstack 3.1
 =================
 
-An implementation of a persistent directory stack in bash.
+An implementation of a persistent directory stack in bash and Z shell.
 
 Motivation
 ----------
@@ -20,6 +20,12 @@ bash-dirstack has the following advantages:
 - You can go to the last entry on the stack without removing it from the stack.
 - You can navigate to directories in the stack without changing the stack.
 - You can use strings, even regular expressions to select directories from the stack.
+
+Compatibility with other shells
+-------------------------------
+
+bash-dirstack is compatible with the Z-shell and works if the Z-shell is your
+default login shell. However, bash must be installed on the system.
 
 How to install
 --------------
