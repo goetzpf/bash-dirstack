@@ -205,8 +205,17 @@ function dsset {
     fi
     if [ ! -e "$_BASH_DIRSTACK_DIR/$1" ]; then
         echo "Directory stack $1 doesn't exist yet."
-        read -p "Create it ? (Y/N) " -n 1 -r
-        echo
+        if [ $(basename $(echo $SHELL)) == "bash" ]; then
+            read -p "Create it ? (Y/N) " -n 1 -r
+            echo 
+        else
+            # Note: since 'read' works differently in the z-shell we do a
+            # "read" here by calling bash with the read command in it's command
+            # argument.  Although z-shell is not officially supported by
+            # bash-dirstack it actually works for the z-shell, too.
+            REPLY=$(bash -c 'read -p "Create it ? (Y/N) " -n 1; echo $REPLY')
+            echo 
+        fi
         if [ "$REPLY" = "Y" -o "$REPLY" = "y" ]; then
             echo "Directory stack $1 is created."
         else
