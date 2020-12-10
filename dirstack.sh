@@ -20,7 +20,7 @@
 #                      path stack
 # -------------------------------------------------------
 
-_BASH_DIRSTACK_VERSION="3.1"
+_BASH_DIRSTACK_VERSION="3.1.1"
 
 _BASH_DIRSTACK_DIR="$HOME/DIRSTACK"
 

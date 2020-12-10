@@ -1,6 +1,6 @@
-=================
-bash-dirstack 3.1
-=================
+===================
+bash-dirstack 3.1.1
+===================
 
 An implementation of a persistent directory stack in bash and Z shell.
 
